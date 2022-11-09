@@ -196,7 +196,7 @@ func (m *MaxmindGeolocation) Match(r *http.Request) bool {
 		return false
 	}
 
-	remoteIp := r.GetHeader("Cf-Connecting-Ip")
+	remoteIp := r.Header.Get("Cf-Connecting-Ip")
 	if remoteIp == "" {
 		ip, _, err := net.SplitHostPort(r.RemoteAddr)
 		if err != nil {
@@ -212,7 +212,7 @@ func (m *MaxmindGeolocation) Match(r *http.Request) bool {
 		return false
 	}
 	var record Record
-	err = m.dbInst.Lookup(addr, &record)
+	err := m.dbInst.Lookup(addr, &record)
 	if err != nil {
 		m.logger.Warn("cannot lookup IP address", zap.String("address", r.RemoteAddr), zap.Error(err))
 		return false
