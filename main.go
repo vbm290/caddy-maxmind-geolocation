@@ -1,19 +1,20 @@
 /*
   Caddy v2 module to filter requests based on source IP geographic location. This was a feature provided by the V1 ipfilter middleware.
-  Complete documentation and usage examples are available at https://github.com/porech/caddy-maxmind-geolocation
+  Complete documentation and usage examples are available at https://github.com/vbm290/caddy-maxmind-geolocation
 */
 package caddy_maxmind_geolocation
 
 import (
 	"fmt"
+	"net"
+	"net/http"
+	"strconv"
+
 	"github.com/caddyserver/caddy/v2"
 	"github.com/caddyserver/caddy/v2/caddyconfig/caddyfile"
 	"github.com/caddyserver/caddy/v2/modules/caddyhttp"
 	"github.com/oschwald/maxminddb-golang"
 	"go.uber.org/zap"
-	"net"
-	"net/http"
-	"strconv"
 )
 
 // Interface guards
@@ -94,7 +95,7 @@ type MaxmindGeolocation struct {
 	specify both of them, denied countries will take precedence over allowed ones.
 	If you specify none of them, all requests will be denied.
 
-	Examples are available at https://github.com/porech/caddy-maxmind-geolocation/
+	Examples are available at https://github.com/vbm290/caddy-maxmind-geolocation/
 */
 func (m *MaxmindGeolocation) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 	current := 0
@@ -203,7 +204,6 @@ func (m *MaxmindGeolocation) Match(r *http.Request) bool {
 		}
 		remoteIp = ip
 	}
-	
 
 	// Get the record from the database
 	addr := net.ParseIP(remoteIp)
