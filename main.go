@@ -195,10 +195,15 @@ func (m *MaxmindGeolocation) Match(r *http.Request) bool {
 		return false
 	}
 
-	remoteIp, _, err := net.SplitHostPort(r.RemoteAddr)
-	if err != nil {
-		m.logger.Warn("cannot split IP address", zap.String("address", r.RemoteAddr), zap.Error(err))
+	remoteIp := r.GetHeader("Cf-Connecting-Ip")
+	if remoteIp == "" {
+		ip, _, err := net.SplitHostPort(r.RemoteAddr)
+		if err != nil {
+			m.logger.Warn("cannot split IP address", zap.String("address", r.RemoteAddr), zap.Error(err))
+		}
+		remoteIp = ip
 	}
+	
 
 	// Get the record from the database
 	addr := net.ParseIP(remoteIp)
